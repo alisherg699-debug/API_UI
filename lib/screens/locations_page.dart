@@ -36,50 +36,57 @@ class LocationsPage extends StatelessWidget {
         if (state is LocationsLoaded) {
           final locations = state.locationsResponse.results;
 
-          return ListView.separated(
-            padding: const EdgeInsets.all(16),
-            itemCount: locations.length,
-            separatorBuilder: (context, index) => const Divider(color: Colors.white10),
-            itemBuilder: (context, index) {
-              final location = locations[index];
-              return Container(
-                padding: const EdgeInsets.symmetric(vertical: 8),
-                child: Row(
-                  children: [
-                    const CircleAvatar(
-                      radius: 30,
-                      backgroundColor: Colors.white12,
-                      child: Icon(Icons.map, color: Colors.green, size: 28),
-                    ),
-                    const SizedBox(width: 16),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            location.name,
-                            style: const TextStyle(
-                              color: Colors.blueAccent,
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          const SizedBox(height: 4),
-                          Text(
-                            "${location.dimension} | Residents: ${location.residents.length}",
-                            style: const TextStyle(
-                              color: Colors.white70,
-                              fontSize: 13,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    const Icon(Icons.arrow_forward_ios, color: Colors.white24, size: 14),
-                  ],
-                ),
-              );
+          return RefreshIndicator(
+            color: Colors.green,
+            backgroundColor: Colors.black87,
+            onRefresh: () async {
+              context.read<LocationBloc>().add(FetchLocations(page: 1));
             },
+            child: ListView.separated(
+              padding: const EdgeInsets.all(16),
+              itemCount: locations.length,
+              separatorBuilder: (context, index) => const Divider(color: Colors.white10),
+              itemBuilder: (context, index) {
+                final location = locations[index];
+                return Container(
+                  padding: const EdgeInsets.symmetric(vertical: 8),
+                  child: Row(
+                    children: [
+                      const CircleAvatar(
+                        radius: 30,
+                        backgroundColor: Colors.white12,
+                        child: Icon(Icons.map, color: Colors.green, size: 28),
+                      ),
+                      const SizedBox(width: 16),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              location.name,
+                              style: const TextStyle(
+                                color: Colors.blueAccent,
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            const SizedBox(height: 4),
+                            Text(
+                              "${location.dimension} | Residents: ${location.residents.length}",
+                              style: const TextStyle(
+                                color: Colors.white70,
+                                fontSize: 13,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      const Icon(Icons.arrow_forward_ios, color: Colors.white24, size: 14),
+                    ],
+                  ),
+                );
+              },
+            ),
           );
         }
 
