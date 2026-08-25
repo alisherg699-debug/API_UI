@@ -31,10 +31,10 @@ class Info {
 
   factory Info.fromJson(Map<String, dynamic> json) {
     return Info(
-      count: json["count"] as int,
-      pages: json["pages"] as int,
-      next: json["next"] as String?,
-      prev: json["prev"] as String?,
+      count: json["count"] ?? 0,
+      pages: json["pages"] ?? 0,
+      next: json["next"] ?? "",
+      prev: json["prev"] ?? "",
     );
   }
 }
@@ -50,8 +50,8 @@ class Location {
 
   factory Location.fromJson(Map<String, dynamic> json) {
     return Location(
-      name: json['name'] as String,
-      url: json['url'] as String,
+      name: json['name'] ?? "",
+      url: json['url'] ?? "",
     );
   }
 }
@@ -87,18 +87,25 @@ class Character {
 
   factory Character.fromJson(Map<String, dynamic> json) {
     return Character(
-      id: json["id"] as int,
-      name: json["name"] as String,
-      status: json["status"] as String,
-      species: json["species"] as String,
-      type: json["type"] as String,
-      gender: json["gender"] as String,
-      origin: Location.fromJson(json["origin"] as Map<String, dynamic>),
-      location: Location.fromJson(json["location"] as Map<String, dynamic>),
-      image: json["image"] as String,
-      episode: (json["episode"] as List<dynamic>).map((e) => e as String).toList(),
-      url: json["url"] as String,
-      created: DateTime.parse(json["created"] as String),
+      id: json["id"] ?? 0,
+      name: json["name"] ?? "",
+      status: json["status"] ?? "",
+      species: json["species"] ?? "",
+      type: json["type"] ?? "",
+      gender: json["gender"] ?? "",
+      origin: json["origin"] != null
+        ? Location.fromJson(json["origin"] as Map<String, dynamic>)
+        : Location(name: "", url: ""),
+      location: json["location"] != null
+        ? Location.fromJson(json["location"] as Map<String, dynamic>)
+        : Location(name: "", url: ""),
+      image: json["image"] ?? "",
+      episode: (json["episode"] as List<dynamic>?)?.map((e)
+        => e as String).toList() ?? [],
+      url: json["url"] ?? "",
+      created: json["created"] != null
+        ? DateTime.parse(json["created"] as String)
+        : DateTime.now(),
     );
   }
 }

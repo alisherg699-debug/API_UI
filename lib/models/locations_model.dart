@@ -31,10 +31,10 @@ class Info {
 
   factory Info.fromJson(Map<String, dynamic> json) {
     return Info(
-      count: json["count"] as int,
-      pages: json["pages"] as int,
-      next: json["next"] as String?,
-      prev: json["prev"] as String?,
+      count: json["count"] ?? 0,
+      pages: json["pages"] ?? 0,
+      next: json["next"] ?? "",
+      prev: json["prev"] ?? "",
     );
   }
 }
@@ -60,13 +60,16 @@ class Locations {
 
   factory Locations.fromJson(Map<String, dynamic> json) {
     return Locations(
-      id: json["id"] as int,
-      name: json["name"] as String,
-      type: json["type"] as String,
-      dimension: json["dimension"] as String,
-      residents: (json["residents"] as List<dynamic>).map((e) => e as String).toList(),
-      url: json["url"] as String,
-      created: DateTime.parse(json["created"] as String),
+      id: json["id"] ?? 0,
+      name: json["name"] ?? "",
+      type: json["type"] ?? "",
+      dimension: json["dimension"] ?? "",
+      residents: (json["residents"] as List<dynamic>?)?.map((e)
+        => e as String).toList() ?? [],
+      url: json["url"] ?? "",
+      created: json["created"] != null
+        ? DateTime.parse(json["created"] as String)
+        : DateTime.now(),
     );
   }
 }
