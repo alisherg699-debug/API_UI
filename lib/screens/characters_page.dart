@@ -36,75 +36,82 @@ class CharacterPage extends StatelessWidget {
           if (state is CharacterLoaded) {
             final characters = state.characterResponse.results;
 
-            return Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const Padding(
-                  padding: EdgeInsets.fromLTRB(16, 16, 16, 8),
-                  child: Text(
-                    "👀 CLICK ON ANY CELL FOR FURTHER INFORMATION",
-                    style: TextStyle(
-                      color: Colors.grey,
-                      fontSize: 10,
-                      fontWeight: FontWeight.bold,
+            return RefreshIndicator(
+              color: Colors.green,
+              backgroundColor: Colors.black87,
+              onRefresh: () async {
+                context.read<CharacterBloc>().add(FetchCharacters(page: 1));
+              },
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Padding(
+                    padding: EdgeInsets.fromLTRB(16, 16, 16, 8),
+                    child: Text(
+                      "👀 CLICK ON ANY CELL FOR FURTHER INFORMATION",
+                      style: TextStyle(
+                        color: Colors.grey,
+                        fontSize: 10,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                   ),
-                ),
-                Expanded(
-                  child: ListView.separated(
-                    padding: const EdgeInsets.symmetric(horizontal: 16),
-                    itemCount: characters.length,
-                    separatorBuilder: (context, index) => const Divider(
-                      color: Colors.white10,
-                      height: 1,
-                    ),
-                    itemBuilder: (context, index) {
-                      final character = characters[index];
-                      return Container(
-                        padding: const EdgeInsets.symmetric(vertical: 12),
-                        child: Row(
-                          children: [
-                            CircleAvatar(
-                              radius: 35,
-                              backgroundColor: Colors.white12,
-                              backgroundImage: NetworkImage(character.image),
-                            ),
-                            const SizedBox(width: 16),
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    character.name,
-                                    style: const TextStyle(
-                                      color: Colors.blueAccent,
-                                      fontSize: 18,
-                                      fontWeight: FontWeight.w500,
-                                    ),
-                                  ),
-                                  const SizedBox(height: 4),
-                                  Text(
-                                    character.status,
-                                    style: const TextStyle(
-                                      color: Colors.white70,
-                                      fontSize: 14,
-                                    ),
-                                  ),
-                                ],
+                  Expanded(
+                    child: ListView.separated(
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      itemCount: characters.length,
+                      separatorBuilder: (context, index) => const Divider(
+                        color: Colors.white10,
+                        height: 1,
+                      ),
+                      itemBuilder: (context, index) {
+                        final character = characters[index];
+                        return Container(
+                          padding: const EdgeInsets.symmetric(vertical: 12),
+                          child: Row(
+                            children: [
+                              CircleAvatar(
+                                radius: 35,
+                                backgroundColor: Colors.white12,
+                                backgroundImage: NetworkImage(character.image),
                               ),
-                            ),
-                            const Icon(
-                              Icons.arrow_forward_ios,
-                              color: Colors.white24,
-                              size: 16,
-                            ),
-                          ],
-                        ),
-                      );
-                    },
+                              const SizedBox(width: 16),
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      character.name,
+                                      style: const TextStyle(
+                                        color: Colors.blueAccent,
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.w500,
+                                      ),
+                                    ),
+                                    const SizedBox(height: 4),
+                                    Text(
+                                      character.status,
+                                      style: const TextStyle(
+                                        color: Colors.white70,
+                                        fontSize: 14,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              const Icon(
+                                Icons.arrow_forward_ios,
+                                color: Colors.white24,
+                                size: 16,
+                              ),
+                            ],
+                          ),
+                        );
+                      },
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             );
           }
 
