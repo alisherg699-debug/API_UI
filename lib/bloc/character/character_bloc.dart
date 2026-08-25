@@ -1,5 +1,4 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-
 import '../../repositories/character_repository.dart';
 import 'character_event.dart';
 import 'character_state.dart';
