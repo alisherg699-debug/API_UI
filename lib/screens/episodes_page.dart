@@ -36,50 +36,57 @@ class EpisodesPage extends StatelessWidget {
           if (state is EpisodesLoaded) {
             final episodes = state.episodesResponse.results;
 
-            return ListView.separated(
-              padding: const EdgeInsets.all(16),
-              itemCount: episodes.length,
-              separatorBuilder: (context, index) => const Divider(color: Colors.white10),
-              itemBuilder: (context, index) {
-                final episode = episodes[index];
-                return Container(
-                  padding: const EdgeInsets.symmetric(vertical: 8),
-                  child: Row(
-                    children: [
-                      const CircleAvatar(
-                        radius: 30,
-                        backgroundColor: Colors.white12,
-                        child: Icon(Icons.movie_filter, color: Colors.green, size: 28),
-                      ),
-                      const SizedBox(width: 16),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              episode.name,
-                              style: const TextStyle(
-                                color: Colors.blueAccent,
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                            const SizedBox(height: 4),
-                            Text(
-                              "${episode.episode} | ${episode.air_date}",
-                              style: const TextStyle(
-                                color: Colors.white70,
-                                fontSize: 13,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      const Icon(Icons.arrow_forward_ios, color: Colors.white24, size: 14),
-                    ],
-                  ),
-                );
+            return RefreshIndicator(
+              color: Colors.green,
+              backgroundColor: Colors.black87,
+              onRefresh: () async {
+                context.read<EpisodeBloc>().add(FetchEpisodes(page: 1));
               },
+              child: ListView.separated(
+                padding: const EdgeInsets.all(16),
+                itemCount: episodes.length,
+                separatorBuilder: (context, index) => const Divider(color: Colors.white10),
+                itemBuilder: (context, index) {
+                  final episode = episodes[index];
+                  return Container(
+                    padding: const EdgeInsets.symmetric(vertical: 8),
+                    child: Row(
+                      children: [
+                        const CircleAvatar(
+                          radius: 30,
+                          backgroundColor: Colors.white12,
+                          child: Icon(Icons.movie_filter, color: Colors.green, size: 28),
+                        ),
+                        const SizedBox(width: 16),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                episode.name,
+                                style: const TextStyle(
+                                  color: Colors.blueAccent,
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              const SizedBox(height: 4),
+                              Text(
+                                "${episode.episode} | ${episode.air_date}",
+                                style: const TextStyle(
+                                  color: Colors.white70,
+                                  fontSize: 13,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        const Icon(Icons.arrow_forward_ios, color: Colors.white24, size: 14),
+                      ],
+                    ),
+                  );
+                },
+              ),
             );
           }
 
