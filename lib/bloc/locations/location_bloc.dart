@@ -1,4 +1,3 @@
-import 'package:api_ui/models/locations_model.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../repositories/location_repository.dart';

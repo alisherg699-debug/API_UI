@@ -8,14 +8,18 @@ class CharacterBloc extends Bloc<CharacterEvent, CharacterState> {
   final CharacterRepository repository;
 
   CharacterBloc(this.repository) : super(CharacterInitial()) {
-    on<FetchCharacters>((event, emit) async {
-      emit(CharacterLoading());
-      try {
-        final result = await repository.getCharacters(event.page);
-        emit(CharacterLoaded(result));
-      } catch (e) {
-        emit(CharacterError(e.toString()));
-      }
-    });
+    on<FetchCharacters>(_onFetchCharacters);
+}
+  Future<void> _onFetchCharacters(
+    FetchCharacters event,
+    Emitter<CharacterState> emit,
+  ) async {
+    emit(CharacterLoading());
+    try {
+      final result = await repository.getCharacters(event.page);
+      emit(CharacterLoaded(result));
+    } catch (e) {
+      emit(CharacterError(e.toString()));
+    }
   }
 }
