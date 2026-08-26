@@ -15,19 +15,16 @@ class _CharacterPageState extends State<CharacterPage> {
    final ScrollController _scrollController = ScrollController();
    int _currentPage = 1;
    bool _isLoadingMore = false;
-   @override
-   void initState() {
-     super.initState();
-     _scrollController.addListener(_onScroll);
-   }
+
 
    void _onScroll() {
+     if (_isLoadingMore) return;
      if (_scrollController.position.pixels >=
          _scrollController.position.maxScrollExtent - 200) {
 
        final state = context.read<CharacterBloc>().state;
 
-       if (state is CharacterLoaded && !_isLoadingMore) {
+       if (state is CharacterLoaded) {
 
          if (state.characterResponse.info.next != null) {
            setState(() {
@@ -38,6 +35,12 @@ class _CharacterPageState extends State<CharacterPage> {
          }
        }
      }
+   }
+   @override
+   void initState() {
+     super.initState();
+     _scrollController.addListener(_onScroll);
+     context.read<CharacterBloc>().add(FetchCharacters(page: 1));
    }
 
    @override
@@ -67,7 +70,10 @@ class _CharacterPageState extends State<CharacterPage> {
         builder: (context, state) {
           if (state is CharacterLoading && _currentPage == 1) {
             return const Center(
-              child: CircularProgressIndicator(color: Colors.green),
+              child: CircularProgressIndicator(
+                color: Colors.green,
+                strokeWidth: 4,
+              ),
             );
           }
 
@@ -113,9 +119,13 @@ class _CharacterPageState extends State<CharacterPage> {
                             return const Padding(
                               padding: EdgeInsets.symmetric(vertical: 20),
                               child: Center(
-                                child: CircularProgressIndicator(
-                                  color: Colors.green,
-                                  strokeWidth: 2,
+                                child: SizedBox(
+                                  width: 24,
+                                  height: 24,
+                                  child: CircularProgressIndicator(
+                                    color: Colors.green,
+                                    strokeWidth: 2,
+                                  ),
                                 ),
                               ),
                             );
@@ -128,7 +138,26 @@ class _CharacterPageState extends State<CharacterPage> {
                               CircleAvatar(
                                 radius: 35,
                                 backgroundColor: Colors.white12,
-                                backgroundImage: NetworkImage(character.image),
+                                child: ClipOval(
+                                  child: Image.network(
+                                    character.image,
+                                    fit: BoxFit.cover,
+                                    loadingBuilder: (context, child, loadingProgress) {
+                                      if (loadingProgress == null) return child;
+                                      return Center(
+                                        child: CircularProgressIndicator(
+                                          color: Colors.green.withOpacity(0.5),
+                                          strokeWidth: 2,
+                                          value: loadingProgress.expectedTotalBytes != null
+                                            ? loadingProgress.cumulativeBytesLoaded / loadingProgress.expectedTotalBytes!
+                                            : null,  
+                                        ),
+                                      );
+                                    },
+                                    errorBuilder: (context, error, stackTrace) =>
+                                      const Icon(Icons.person, color: Colors.grey,),
+                                  ),
+                                ),
                               ),
                               const SizedBox(width: 16),
                               Expanded(
@@ -193,10 +222,8 @@ class _CharacterPageState extends State<CharacterPage> {
             );
           }
           return const Center(
-            child: Text(
-              "Ma'lumot topilmadi",
-              style: TextStyle(color: Colors.white),
-            ),
+              child: Text("Malumotlar topilmadi"),
+              //CircularProgressIndicator(color: Colors.green)
           );
         },
       ),

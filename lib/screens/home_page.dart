@@ -27,7 +27,7 @@ class _MyHomeWidgetState extends State<MyHomeWidget> {
     LocationsPage(),
     EpisodesPage(),
   ];
-  @override
+  /*@override
   void initState() {
     super.initState();
 
@@ -40,7 +40,7 @@ class _MyHomeWidgetState extends State<MyHomeWidget> {
     context.read<LocationBloc>().add(
       FetchLocations(page: 1),
     );
-  }
+  }*/
 
   @override
   Widget build(BuildContext context) {
