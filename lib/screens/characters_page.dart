@@ -27,7 +27,7 @@ class _CharacterPageState extends State<CharacterPage> {
 
        final state = context.read<CharacterBloc>().state;
 
-       if (state is CharacterLoaded) {
+       if (state is CharacterLoaded && !_isLoadingMore) {
 
          if (state.characterResponse.info.next != null) {
            setState(() {

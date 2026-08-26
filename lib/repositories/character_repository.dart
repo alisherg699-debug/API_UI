@@ -12,7 +12,7 @@ class CharacterRepository {
       print("📥 GET response: ${response.body}");
       return CharacterResponse.fromJson(jsonDecode(response.body));
     } else {
-      throw Exception('Maʼlumotlarni yuklashda xatolik yuz berdi');
+      throw Exception('Server xatosi: ${response.statusCode}');
     }
   }
 }
