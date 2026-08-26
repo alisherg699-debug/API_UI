@@ -77,8 +77,13 @@ class _CharacterPageState extends State<CharacterPage> {
             return RefreshIndicator(
               color: Colors.green,
               onRefresh: () async {
-                _currentPage = 1;
+                if (_isLoadingMore) return;
+                setState(() {
+                  _currentPage = 1;
+                });
                 context.read<CharacterBloc>().add(FetchCharacters(page: 1));
+
+                await Future.delayed(const Duration(microseconds: 500));
               },
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
