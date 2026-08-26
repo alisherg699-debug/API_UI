@@ -69,6 +69,9 @@ class _CharacterPageState extends State<CharacterPage> {
           }
         },
         builder: (context, state) {
+          if (state is CharacterInitial || (state is CharacterLoading && _currentPage == 1)) {
+            return const Center(child: CircularProgressIndicator(color: Colors.green));
+          }
           if (state is CharacterLoading && _currentPage == 1) {
             return const Center(
               child: CircularProgressIndicator(
@@ -90,7 +93,7 @@ class _CharacterPageState extends State<CharacterPage> {
                 });
                 context.read<CharacterBloc>().add(FetchCharacters(page: 1));
 
-                await Future.delayed(const Duration(microseconds: 500));
+                await Future.delayed(const Duration(milliseconds:  500));
               },
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
