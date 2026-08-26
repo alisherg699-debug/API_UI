@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../bloc/character/character_bloc.dart';
 import '../bloc/character/character_state.dart';
 import '../bloc/character/character_event.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 
 class CharacterPage extends StatefulWidget {
   const CharacterPage({super.key});
@@ -139,23 +140,13 @@ class _CharacterPageState extends State<CharacterPage> {
                                 radius: 35,
                                 backgroundColor: Colors.white12,
                                 child: ClipOval(
-                                  child: Image.network(
-                                    character.image,
+                                  child: CachedNetworkImage(
+                                    imageUrl: character.image,
                                     fit: BoxFit.cover,
-                                    loadingBuilder: (context, child, loadingProgress) {
-                                      if (loadingProgress == null) return child;
-                                      return Center(
-                                        child: CircularProgressIndicator(
-                                          color: Colors.green.withOpacity(0.5),
-                                          strokeWidth: 2,
-                                          value: loadingProgress.expectedTotalBytes != null
-                                            ? loadingProgress.cumulativeBytesLoaded / loadingProgress.expectedTotalBytes!
-                                            : null,  
-                                        ),
-                                      );
-                                    },
-                                    errorBuilder: (context, error, stackTrace) =>
-                                      const Icon(Icons.person, color: Colors.grey,),
+                                    placeholder: (context, url) => const Center(
+                                      child: CircularProgressIndicator(strokeWidth: 2, color: Colors.green),
+                                    ),
+                                    errorWidget: (context, url, error) => const Icon(Icons.person, color: Colors.grey),
                                   ),
                                 ),
                               ),
