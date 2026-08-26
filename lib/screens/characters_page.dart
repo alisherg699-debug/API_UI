@@ -14,7 +14,7 @@ class CharacterPage extends StatefulWidget {
 class _CharacterPageState extends State<CharacterPage> {
    final ScrollController _scrollController = ScrollController();
    int _currentPage = 1;
-
+   bool _isLoadingMore = false;
    @override
    void initState() {
      super.initState();
@@ -30,7 +30,10 @@ class _CharacterPageState extends State<CharacterPage> {
        if (state is CharacterLoaded) {
 
          if (state.characterResponse.info.next != null) {
-           _currentPage++;
+           setState(() {
+             _isLoadingMore = true;
+             _currentPage++;
+           });
            context.read<CharacterBloc>().add(FetchCharacters(page: _currentPage));
          }
        }
@@ -53,7 +56,14 @@ class _CharacterPageState extends State<CharacterPage> {
         centerTitle: true,
       ),
       backgroundColor: const Color(0xFF121212),
-      body: BlocBuilder<CharacterBloc, CharacterState>(
+      body: BlocConsumer<CharacterBloc, CharacterState>(
+        listener: (context, state) {
+          if (state is CharacterLoaded || state is CharacterError) {
+            setState(() {
+              _isLoadingMore = false;
+            });
+          }
+        },
         builder: (context, state) {
           if (state is CharacterLoading && _currentPage == 1) {
             return const Center(
@@ -65,6 +75,7 @@ class _CharacterPageState extends State<CharacterPage> {
             final characters = state.characterResponse.results;
 
             return RefreshIndicator(
+              color: Colors.green,
               onRefresh: () async {
                 _currentPage = 1;
                 context.read<CharacterBloc>().add(FetchCharacters(page: 1));
@@ -87,7 +98,7 @@ class _CharacterPageState extends State<CharacterPage> {
                     child: ListView.separated(
                       controller: _scrollController,
                       padding: const EdgeInsets.symmetric(horizontal: 16),
-                      itemCount: characters.length,
+                      itemCount: characters.length + (_isLoadingMoreq ? 1 : 0),
                       separatorBuilder: (context, index) => const Divider(
                         color: Colors.white10,
                         height: 1,
