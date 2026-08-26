@@ -4,8 +4,45 @@ import '../bloc/character/character_bloc.dart';
 import '../bloc/character/character_state.dart';
 import '../bloc/character/character_event.dart';
 
-class CharacterPage extends StatelessWidget {
+class CharacterPage extends StatefulWidget {
   const CharacterPage({super.key});
+
+  @override
+  State<CharacterPage> cratedState() => _CharacterPageState();
+}
+
+class _CharacterPageState extends State<CharacterPage> {
+   final ScrollController _scrollController = ScrollController();
+   int _currentPage = 1;
+
+   @override
+   void initState() {
+     super.initState();
+     _scrollController.addListener(_onScroll);
+   }
+
+   void _onScroll() {
+     if (_scrollController.position.pixels >=
+         _scrollController.position.maxScrollExtent - 200) {
+
+       final state = context.read<CharacterBloc>().state;
+
+       if (state is CharacterLoaded) {
+
+         if (state.characterResponse.info.next != null) {
+           _currentPage++;
+           context.read<CharacterBloc>().add(FetchCharacters(page: _currentPage));
+         }
+       }
+     }
+   }
+
+   @override
+   void dispose() {
+     _scrollController.dispose();
+     super.dispose();
+   }
+
 
   @override
   Widget build(BuildContext context) {
@@ -14,20 +51,11 @@ class CharacterPage extends StatelessWidget {
         title: const Text("Characters", style: TextStyle(color: Colors.white),),
         backgroundColor: Colors.black87,
         centerTitle: true,
-        actions: [
-          IconButton(
-            onPressed: () {
-              context.read<CharacterBloc>().add(FetchCharacters());
-            },
-            icon: const Icon(Icons.refresh),
-            color: Colors.white,
-          ),
-        ],
       ),
       backgroundColor: const Color(0xFF121212),
       body: BlocBuilder<CharacterBloc, CharacterState>(
         builder: (context, state) {
-          if (state is CharacterLoading) {
+          if (state is CharacterLoading && _currentPage == 1) {
             return const Center(
               child: CircularProgressIndicator(color: Colors.green),
             );
@@ -37,9 +65,8 @@ class CharacterPage extends StatelessWidget {
             final characters = state.characterResponse.results;
 
             return RefreshIndicator(
-              color: Colors.green,
-              backgroundColor: Colors.black87,
               onRefresh: () async {
+                _currentPage = 1;
                 context.read<CharacterBloc>().add(FetchCharacters(page: 1));
               },
               child: Column(

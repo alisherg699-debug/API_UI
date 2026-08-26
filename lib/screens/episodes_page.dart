@@ -14,15 +14,6 @@ class EpisodesPage extends StatelessWidget {
         title: const Text("Episodes", style: TextStyle(color: Colors.white),),
         backgroundColor: Colors.black87,
         centerTitle: true,
-        actions: [
-          IconButton(
-            onPressed: () {
-              context.read<EpisodeBloc>().add(FetchEpisodes());
-            },
-            icon: const Icon(Icons.refresh),
-            color: Colors.white,
-          ),
-        ],
       ),
       backgroundColor: const Color(0xFF121212),
       body: BlocBuilder<EpisodeBloc, EpisodesState>(
