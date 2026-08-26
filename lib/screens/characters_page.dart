@@ -8,7 +8,7 @@ class CharacterPage extends StatefulWidget {
   const CharacterPage({super.key});
 
   @override
-  State<CharacterPage> cratedState() => _CharacterPageState();
+  State<CharacterPage> createState() => _CharacterPageState();
 }
 
 class _CharacterPageState extends State<CharacterPage> {
@@ -98,12 +98,23 @@ class _CharacterPageState extends State<CharacterPage> {
                     child: ListView.separated(
                       controller: _scrollController,
                       padding: const EdgeInsets.symmetric(horizontal: 16),
-                      itemCount: characters.length + (_isLoadingMoreq ? 1 : 0),
+                      itemCount: characters.length + (_isLoadingMore ? 1 : 0),
                       separatorBuilder: (context, index) => const Divider(
                         color: Colors.white10,
                         height: 1,
                       ),
                       itemBuilder: (context, index) {
+                          if (index == characters.length) {
+                            return const Padding(
+                              padding: EdgeInsets.symmetric(vertical: 20),
+                              child: Center(
+                                child: CircularProgressIndicator(
+                                  color: Colors.green,
+                                  strokeWidth: 2,
+                                ),
+                              ),
+                            );
+                          }
                         final character = characters[index];
                         return Container(
                           padding: const EdgeInsets.symmetric(vertical: 12),
@@ -154,7 +165,7 @@ class _CharacterPageState extends State<CharacterPage> {
             );
           }
 
-          if (state is CharacterError) {
+          if (state is CharacterError && _currentPage == 1) {
             return Center(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -167,7 +178,8 @@ class _CharacterPageState extends State<CharacterPage> {
                   const SizedBox(height: 16),
                   ElevatedButton(
                     onPressed: () {
-                      context.read<CharacterBloc>().add(FetchCharacters());
+                      _currentPage = 1;
+                      context.read<CharacterBloc>().add(FetchCharacters(page: 1));
                     },
                     child: const Text("Qaytadan urinish"),
                   ),
