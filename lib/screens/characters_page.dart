@@ -85,6 +85,7 @@ class _CharacterPageState extends State<CharacterPage> {
                   ),
                   Expanded(
                     child: ListView.separated(
+                      controller: _scrollController,
                       padding: const EdgeInsets.symmetric(horizontal: 16),
                       itemCount: characters.length,
                       separatorBuilder: (context, index) => const Divider(
