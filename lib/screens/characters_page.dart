@@ -21,7 +21,6 @@ class _CharacterPageState extends State<CharacterPage> {
   void initState() {
     super.initState();
     _scrollController.addListener(_onScroll);
-    // Dastlabki yuklash
     context.read<CharacterBloc>().add(FetchCharacters(page: 1));
   }
 
@@ -32,8 +31,7 @@ class _CharacterPageState extends State<CharacterPage> {
       final state = context.read<CharacterBloc>().state;
 
       if (state is CharacterLoaded) {
-        // Faqat keyingi sahifa mavjud bo'lsa yuklaymiz
-        if (state.characterResponse.info.next != null) {
+        if (state.characterResponse.info.next != null && state.characterResponse.info.next!.isNotEmpty) {
           setState(() {
             _isLoadingMore = true;
             _currentPage++;
@@ -66,12 +64,10 @@ class _CharacterPageState extends State<CharacterPage> {
           }
         },
         builder: (context, state) {
-          // 1. Birinchi marta yuklanayotgan holat
           if (state is CharacterInitial || (state is CharacterLoading && _currentPage == 1)) {
             return const Center(child: CircularProgressIndicator(color: Colors.green));
           }
 
-          // 2. Birinchi sahifada xato bo'lsa
           if (state is CharacterError && _currentPage == 1) {
             return Center(
               child: Column(
@@ -91,13 +87,8 @@ class _CharacterPageState extends State<CharacterPage> {
             );
           }
 
-          // 3. Ma'lumotlar bor holat (Asosiy qism)
-          if (state is CharacterLoaded || (state is CharacterError && _currentPage > 1)) {
-            // Agar state Error bo'lsa-yu, lekin bizda eski ma'lumotlar bo'lsa, ularni ko'rsatamiz
-            final response = (state is CharacterLoaded)
-                ? state.characterResponse
-                : (context.read<CharacterBloc>().state as CharacterLoaded).characterResponse;
-
+          if (state is CharacterLoaded) {
+            final response = state.characterResponse;
             final characters = response.results;
 
             return RefreshIndicator(
@@ -122,18 +113,22 @@ class _CharacterPageState extends State<CharacterPage> {
                       itemExtent: 100.0,
                       controller: _scrollController,
                       padding: const EdgeInsets.symmetric(horizontal: 16),
-                      itemCount: characters.length + 1, // Oxirgi xabar uchun +1
+                      itemCount: characters.length + (response.info.next
+                          != null && response.info.next!.isNotEmpty ? 1 : 0),
                       itemBuilder: (context, index) {
-                        // Ro'yxat oxiri
                         if (index == characters.length) {
-                          return response.info.next != null
-                              ? const Center(child: Padding(
-                            padding: EdgeInsets.all(16),
-                            child: SizedBox(width: 24, height: 24, child: CircularProgressIndicator(color: Colors.green, strokeWidth: 2)),
-                          ))
-                              : const Padding(
-                            padding: EdgeInsets.all(20),
-                            child: Center(child: Text("🏁 Barcha qahramonlar yuklandi", style: TextStyle(color: Colors.grey, fontSize: 12))),
+                          return const Center(
+                            child: Padding(
+                              padding: EdgeInsets.all(16),
+                              child: SizedBox(
+                                width: 24,
+                                height: 24,
+                                child: CircularProgressIndicator(
+                                  color: Colors.green,
+                                  strokeWidth: 2,
+                                ),
+                              ),
+                            ),
                           );
                         }
 
@@ -152,7 +147,9 @@ class _CharacterPageState extends State<CharacterPage> {
                                         child: CachedNetworkImage(
                                           imageUrl: character.image,
                                           fit: BoxFit.cover,
-                                          placeholder: (context, url) => const Center(child: CircularProgressIndicator(strokeWidth: 2, color: Colors.green)),
+                                          placeholder: (context, url) => const Center(
+                                            child: CircularProgressIndicator(strokeWidth: 2, color: Colors.green),
+                                          ),
                                           errorWidget: (context, url, error) => const Icon(Icons.person, color: Colors.grey),
                                         ),
                                       ),
@@ -185,7 +182,6 @@ class _CharacterPageState extends State<CharacterPage> {
             );
           }
 
-          // Hech qaysi shart bajarilmasa (Fallback)
           return const Center(child: CircularProgressIndicator(color: Colors.green));
         },
       ),

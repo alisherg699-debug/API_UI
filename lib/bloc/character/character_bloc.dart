@@ -10,43 +10,43 @@ class CharacterBloc extends Bloc<CharacterEvent, CharacterState> {
 
   CharacterBloc(this.repository) : super(CharacterInitial()) {
     on<FetchCharacters>(
-        _onFetchCharacters,
+      _onFetchCharacters,
       transformer: droppable(),
     );
-}
+  }
+
   Future<void> _onFetchCharacters(
     FetchCharacters event,
     Emitter<CharacterState> emit,
   ) async {
-
-    if (state is CharacterLoading && event.page > 1) return;
     final currentState = state;
     List<Character> oldCharacters = [];
+    CharacterResponse? lastResponse;
 
     if (currentState is CharacterLoaded) {
       oldCharacters = currentState.characterResponse.results;
+      lastResponse = currentState.characterResponse;
     }
-    if (event.page == 1) {
+
+    if (event.page == 1 && oldCharacters.isEmpty) {
       emit(CharacterLoading());
     }
 
     try {
       final result = await repository.getCharacters(event.page);
 
-      if (event.page > 1) {
-        emit(
-            CharacterLoaded(
-          CharacterResponse(
-            info: result.info,
-            results: oldCharacters + result.results,
-          ),
-          ),
-        );
-      } else {
-        emit(CharacterLoaded(result));
-      }
+      emit(CharacterLoaded(
+        CharacterResponse(
+          info: result.info,
+          results: event.page == 1 ? result.results : oldCharacters + result.results,
+        ),
+      ));
     } catch (e) {
-      emit(CharacterError(e.toString()));
+      if (oldCharacters.isNotEmpty && lastResponse != null) {
+        emit(CharacterLoaded(lastResponse));
+      } else {
+        emit(CharacterError(e.toString()));
+      }
     }
   }
 }
