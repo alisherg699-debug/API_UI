@@ -108,80 +108,103 @@ class _CharacterPageState extends State<CharacterPage> {
                     ),
                   ),
                   Expanded(
-                    child: ListView.separated(
+                    child: ListView.builder(
+                      itemExtent: 100.0,
                       controller: _scrollController,
                       padding: const EdgeInsets.symmetric(horizontal: 16),
-                      itemCount: characters.length + (_isLoadingMore ? 1 : 0),
-                      separatorBuilder: (context, index) => const Divider(
-                        color: Colors.white10,
-                        height: 1,
-                      ),
+                      cacheExtent: 0.0,
+                      addAutomaticKeepAlives: false,
+                      addRepaintBoundaries: true,
+                      itemCount: characters.length + 1,
                       itemBuilder: (context, index) {
-                          if (index == characters.length) {
+                        if (index == characters.length) {
+                          if (state.characterResponse.info.next != null) {
+                            return const Center(
+                              child: SizedBox(
+                                width: 24,
+                                height: 24,
+                                child: CircularProgressIndicator(
+                                  color: Colors.green,
+                                  strokeWidth: 2,
+                                ),
+                              ),
+                            );
+                          } else {
                             return const Padding(
-                              padding: EdgeInsets.symmetric(vertical: 20),
+                              padding: EdgeInsets.all(20.0),
                               child: Center(
-                                child: SizedBox(
-                                  width: 24,
-                                  height: 24,
-                                  child: CircularProgressIndicator(
-                                    color: Colors.green,
-                                    strokeWidth: 2,
-                                  ),
+                                child: Text(
+                                  "🏁 Barcha ma'lumotlar yuklandi",
+                                  style: TextStyle(color: Colors.grey, fontSize: 12),
                                 ),
                               ),
                             );
                           }
+                        }
+
                         final character = characters[index];
-                        return Container(
-                          padding: const EdgeInsets.symmetric(vertical: 12),
-                          child: Row(
-                            children: [
-                              CircleAvatar(
-                                radius: 35,
-                                backgroundColor: Colors.white12,
-                                child: ClipOval(
-                                  child: CachedNetworkImage(
-                                    imageUrl: character.image,
-                                    fit: BoxFit.cover,
-                                    placeholder: (context, url) => const Center(
-                                      child: CircularProgressIndicator(strokeWidth: 2, color: Colors.green),
-                                    ),
-                                    errorWidget: (context, url, error) => const Icon(Icons.person, color: Colors.grey),
-                                  ),
-                                ),
-                              ),
-                              const SizedBox(width: 16),
-                              Expanded(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
+                        return Column(
+                          children: [
+                            Expanded(
+                              child: Container(
+                                padding: const EdgeInsets.symmetric(vertical: 12),
+                                child: Row(
                                   children: [
-                                    Text(
-                                      character.name,
-                                      style: const TextStyle(
-                                        color: Colors.blueAccent,
-                                        fontSize: 18,
-                                        fontWeight: FontWeight.w500,
+                                    CircleAvatar(
+                                      radius: 35,
+                                      backgroundColor: Colors.white12,
+                                      child: ClipOval(
+                                        child: CachedNetworkImage(
+                                          imageUrl: character.image,
+                                          fit: BoxFit.cover,
+                                          placeholder: (context, url) => const Center(
+                                            child: CircularProgressIndicator(
+                                                strokeWidth: 2, color: Colors.green),
+                                          ),
+                                          errorWidget: (context, url, error) =>
+                                              const Icon(Icons.person, color: Colors.grey),
+                                        ),
                                       ),
                                     ),
-                                    const SizedBox(height: 4),
-                                    Text(
-                                      character.status,
-                                      style: const TextStyle(
-                                        color: Colors.white70,
-                                        fontSize: 14,
+                                    const SizedBox(width: 16),
+                                    Expanded(
+                                      child: Column(
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        mainAxisAlignment: MainAxisAlignment.center,
+                                        children: [
+                                          Text(
+                                            character.name,
+                                            style: const TextStyle(
+                                              color: Colors.blueAccent,
+                                              fontSize: 16,
+                                              fontWeight: FontWeight.w500,
+                                            ),
+                                          ),
+                                          const SizedBox(height: 4),
+                                          Text(
+                                            character.status,
+                                            style: const TextStyle(
+                                              color: Colors.white70,
+                                              fontSize: 14,
+                                            ),
+                                          ),
+                                        ],
                                       ),
+                                    ),
+                                    const Icon(
+                                      Icons.arrow_forward_ios,
+                                      color: Colors.white24,
+                                      size: 16,
                                     ),
                                   ],
                                 ),
                               ),
-                              const Icon(
-                                Icons.arrow_forward_ios,
-                                color: Colors.white24,
-                                size: 16,
-                              ),
-                            ],
-                          ),
+                            ),
+                            const Divider(
+                              color: Colors.white10,
+                              height: 1,
+                            ),
+                          ],
                         );
                       },
                     ),
