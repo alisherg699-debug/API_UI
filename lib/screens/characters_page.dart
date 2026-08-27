@@ -13,47 +13,48 @@ class CharacterPage extends StatefulWidget {
 }
 
 class _CharacterPageState extends State<CharacterPage> {
-   final ScrollController _scrollController = ScrollController();
-   int _currentPage = 1;
-   bool _isLoadingMore = false;
+  final ScrollController _scrollController = ScrollController();
+  int _currentPage = 1;
+  bool _isLoadingMore = false;
 
-   void _onScroll() {
-     if (_isLoadingMore) return;
-     if (_scrollController.position.pixels >=
-         _scrollController.position.maxScrollExtent - 200) {
-       final state = context.read<CharacterBloc>().state;
+  @override
+  void initState() {
+    super.initState();
+    _scrollController.addListener(_onScroll);
+    // Dastlabki yuklash
+    context.read<CharacterBloc>().add(FetchCharacters(page: 1));
+  }
 
-       if (state is CharacterLoaded) {
+  void _onScroll() {
+    if (_isLoadingMore) return;
 
-         if (state.characterResponse.info.next != null) {
-           setState(() {
-             _isLoadingMore = true;
-             _currentPage++;
-           });
-           context.read<CharacterBloc>().add(
-               FetchCharacters(page: _currentPage));
-         }
-       }
-     }
-   }
-   @override
-   void initState() {
-     super.initState();
-     _scrollController.addListener(_onScroll);
-     context.read<CharacterBloc>().add(FetchCharacters(page: 1));
-   }
+    if (_scrollController.position.pixels >= _scrollController.position.maxScrollExtent - 200) {
+      final state = context.read<CharacterBloc>().state;
 
-   @override
-   void dispose() {
-     _scrollController.dispose();
-     super.dispose();
-   }
+      if (state is CharacterLoaded) {
+        // Faqat keyingi sahifa mavjud bo'lsa yuklaymiz
+        if (state.characterResponse.info.next != null) {
+          setState(() {
+            _isLoadingMore = true;
+            _currentPage++;
+          });
+          context.read<CharacterBloc>().add(FetchCharacters(page: _currentPage));
+        }
+      }
+    }
+  }
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Characters", style: TextStyle(color: Colors.white),),
+        title: const Text("Characters", style: TextStyle(color: Colors.white)),
         backgroundColor: Colors.black87,
         centerTitle: true,
       ),
@@ -61,37 +62,50 @@ class _CharacterPageState extends State<CharacterPage> {
       body: BlocConsumer<CharacterBloc, CharacterState>(
         listener: (context, state) {
           if (state is CharacterLoaded || state is CharacterError) {
-            setState(() {
-              _isLoadingMore = false;
-            });
+            setState(() => _isLoadingMore = false);
           }
         },
         builder: (context, state) {
+          // 1. Birinchi marta yuklanayotgan holat
           if (state is CharacterInitial || (state is CharacterLoading && _currentPage == 1)) {
             return const Center(child: CircularProgressIndicator(color: Colors.green));
           }
-          if (state is CharacterLoading && _currentPage == 1) {
-            return const Center(
-              child: CircularProgressIndicator(
-                color: Colors.green,
-                strokeWidth: 4,
+
+          // 2. Birinchi sahifada xato bo'lsa
+          if (state is CharacterError && _currentPage == 1) {
+            return Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(state.message, style: const TextStyle(color: Colors.red), textAlign: TextAlign.center),
+                  const SizedBox(height: 16),
+                  ElevatedButton(
+                    onPressed: () {
+                      setState(() => _currentPage = 1);
+                      context.read<CharacterBloc>().add(FetchCharacters(page: 1));
+                    },
+                    child: const Text("Qaytadan urinish"),
+                  ),
+                ],
               ),
             );
           }
 
-          if (state is CharacterLoaded) {
-            final characters = state.characterResponse.results;
+          // 3. Ma'lumotlar bor holat (Asosiy qism)
+          if (state is CharacterLoaded || (state is CharacterError && _currentPage > 1)) {
+            // Agar state Error bo'lsa-yu, lekin bizda eski ma'lumotlar bo'lsa, ularni ko'rsatamiz
+            final response = (state is CharacterLoaded)
+                ? state.characterResponse
+                : (context.read<CharacterBloc>().state as CharacterLoaded).characterResponse;
+
+            final characters = response.results;
 
             return RefreshIndicator(
               color: Colors.green,
               onRefresh: () async {
-                if (_isLoadingMore) return;
-                setState(() {
-                  _currentPage = 1;
-                });
+                setState(() => _currentPage = 1);
                 context.read<CharacterBloc>().add(FetchCharacters(page: 1));
-
-                await Future.delayed(const Duration(milliseconds:  500));
+                await Future.delayed(const Duration(milliseconds: 500));
               },
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -100,11 +114,7 @@ class _CharacterPageState extends State<CharacterPage> {
                     padding: EdgeInsets.fromLTRB(16, 16, 16, 8),
                     child: Text(
                       "👀 CLICK ON ANY CELL FOR FURTHER INFORMATION",
-                      style: TextStyle(
-                        color: Colors.grey,
-                        fontSize: 10,
-                        fontWeight: FontWeight.bold,
-                      ),
+                      style: TextStyle(color: Colors.grey, fontSize: 10, fontWeight: FontWeight.bold),
                     ),
                   ),
                   Expanded(
@@ -112,34 +122,19 @@ class _CharacterPageState extends State<CharacterPage> {
                       itemExtent: 100.0,
                       controller: _scrollController,
                       padding: const EdgeInsets.symmetric(horizontal: 16),
-                      cacheExtent: 0.0,
-                      addAutomaticKeepAlives: false,
-                      addRepaintBoundaries: true,
-                      itemCount: characters.length + 1,
+                      itemCount: characters.length + 1, // Oxirgi xabar uchun +1
                       itemBuilder: (context, index) {
+                        // Ro'yxat oxiri
                         if (index == characters.length) {
-                          if (state.characterResponse.info.next != null) {
-                            return const Center(
-                              child: SizedBox(
-                                width: 24,
-                                height: 24,
-                                child: CircularProgressIndicator(
-                                  color: Colors.green,
-                                  strokeWidth: 2,
-                                ),
-                              ),
-                            );
-                          } else {
-                            return const Padding(
-                              padding: EdgeInsets.all(20.0),
-                              child: Center(
-                                child: Text(
-                                  "🏁 Barcha ma'lumotlar yuklandi",
-                                  style: TextStyle(color: Colors.grey, fontSize: 12),
-                                ),
-                              ),
-                            );
-                          }
+                          return response.info.next != null
+                              ? const Center(child: Padding(
+                            padding: EdgeInsets.all(16),
+                            child: SizedBox(width: 24, height: 24, child: CircularProgressIndicator(color: Colors.green, strokeWidth: 2)),
+                          ))
+                              : const Padding(
+                            padding: EdgeInsets.all(20),
+                            child: Center(child: Text("🏁 Barcha qahramonlar yuklandi", style: TextStyle(color: Colors.grey, fontSize: 12))),
+                          );
                         }
 
                         final character = characters[index];
@@ -157,12 +152,8 @@ class _CharacterPageState extends State<CharacterPage> {
                                         child: CachedNetworkImage(
                                           imageUrl: character.image,
                                           fit: BoxFit.cover,
-                                          placeholder: (context, url) => const Center(
-                                            child: CircularProgressIndicator(
-                                                strokeWidth: 2, color: Colors.green),
-                                          ),
-                                          errorWidget: (context, url, error) =>
-                                              const Icon(Icons.person, color: Colors.grey),
+                                          placeholder: (context, url) => const Center(child: CircularProgressIndicator(strokeWidth: 2, color: Colors.green)),
+                                          errorWidget: (context, url, error) => const Icon(Icons.person, color: Colors.grey),
                                         ),
                                       ),
                                     ),
@@ -172,38 +163,18 @@ class _CharacterPageState extends State<CharacterPage> {
                                         crossAxisAlignment: CrossAxisAlignment.start,
                                         mainAxisAlignment: MainAxisAlignment.center,
                                         children: [
-                                          Text(
-                                            character.name,
-                                            style: const TextStyle(
-                                              color: Colors.blueAccent,
-                                              fontSize: 16,
-                                              fontWeight: FontWeight.w500,
-                                            ),
-                                          ),
+                                          Text(character.name, style: const TextStyle(color: Colors.blueAccent, fontSize: 16, fontWeight: FontWeight.w500)),
                                           const SizedBox(height: 4),
-                                          Text(
-                                            character.status,
-                                            style: const TextStyle(
-                                              color: Colors.white70,
-                                              fontSize: 14,
-                                            ),
-                                          ),
+                                          Text(character.status, style: const TextStyle(color: Colors.white70, fontSize: 14)),
                                         ],
                                       ),
                                     ),
-                                    const Icon(
-                                      Icons.arrow_forward_ios,
-                                      color: Colors.white24,
-                                      size: 16,
-                                    ),
+                                    const Icon(Icons.arrow_forward_ios, color: Colors.white24, size: 16),
                                   ],
                                 ),
                               ),
                             ),
-                            const Divider(
-                              color: Colors.white10,
-                              height: 1,
-                            ),
+                            const Divider(color: Colors.white10, height: 1),
                           ],
                         );
                       },
@@ -214,32 +185,8 @@ class _CharacterPageState extends State<CharacterPage> {
             );
           }
 
-          if (state is CharacterError && _currentPage == 1) {
-            return Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    state.message,
-                    style: const TextStyle(color: Colors.red),
-                    textAlign: TextAlign.center,
-                  ),
-                  const SizedBox(height: 16),
-                  ElevatedButton(
-                    onPressed: () {
-                      _currentPage = 1;
-                      context.read<CharacterBloc>().add(FetchCharacters(page: 1));
-                    },
-                    child: const Text("Qaytadan urinish"),
-                  ),
-                ],
-              ),
-            );
-          }
-          return const Center(
-              child: Text("Malumotlar topilmadi"),
-              //CircularProgressIndicator(color: Colors.green)
-          );
+          // Hech qaysi shart bajarilmasa (Fallback)
+          return const Center(child: CircularProgressIndicator(color: Colors.green));
         },
       ),
     );
