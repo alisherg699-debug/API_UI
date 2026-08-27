@@ -23,22 +23,25 @@ class CharacterBloc extends Bloc<CharacterEvent, CharacterState> {
     final currentState = state;
     List<Character> oldCharacters = [];
 
+    if (currentState is CharacterLoaded) {
+      oldCharacters = currentState.characterResponse.results;
+    }
     if (event.page == 1) {
       emit(CharacterLoading());
     }
-    else if (currentState is CharacterLoaded) {
-      oldCharacters = currentState.characterResponse.results;
-    }
+
     try {
       final result = await repository.getCharacters(event.page);
 
       if (event.page > 1) {
-        emit(CharacterLoaded(
+        emit(
+            CharacterLoaded(
           CharacterResponse(
             info: result.info,
             results: oldCharacters + result.results,
           ),
-        ));
+          ),
+        );
       } else {
         emit(CharacterLoaded(result));
       }

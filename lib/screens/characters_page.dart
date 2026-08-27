@@ -17,12 +17,10 @@ class _CharacterPageState extends State<CharacterPage> {
    int _currentPage = 1;
    bool _isLoadingMore = false;
 
-
    void _onScroll() {
      if (_isLoadingMore) return;
      if (_scrollController.position.pixels >=
          _scrollController.position.maxScrollExtent - 200) {
-
        final state = context.read<CharacterBloc>().state;
 
        if (state is CharacterLoaded) {
@@ -32,7 +30,8 @@ class _CharacterPageState extends State<CharacterPage> {
              _isLoadingMore = true;
              _currentPage++;
            });
-           context.read<CharacterBloc>().add(FetchCharacters(page: _currentPage));
+           context.read<CharacterBloc>().add(
+               FetchCharacters(page: _currentPage));
          }
        }
      }
@@ -49,7 +48,6 @@ class _CharacterPageState extends State<CharacterPage> {
      _scrollController.dispose();
      super.dispose();
    }
-
 
   @override
   Widget build(BuildContext context) {
