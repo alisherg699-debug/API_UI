@@ -1,4 +1,3 @@
-import 'package:api_ui/bloc/episodes/episode_state.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../bloc/locations/location_bloc.dart';
@@ -30,8 +29,8 @@ class _LocationPageState extends State<LocationsPage> {
     if (_scrollController.position.pixels >= _scrollController.position.maxScrollExtent - 200) {
       final state = context.read<LocationBloc>().state;
 
-      if (state is EpisodesLoaded) {
-        if (state.locationResponse.info.next != null && state.locationResponse.info.next!.isNotEmpty) {
+      if (state is LocationsLoaded) {
+        if (state.locationsResponse.info.next != null && state.locationsResponse.info.next!.isNotEmpty) {
           setState(() {
             _isLoadingMore = true;
             _currentPage++;
