@@ -14,7 +14,7 @@ class LocationsRepository {
 
     if (response.statusCode == 200) {
       debugPrint('----------------------------------------------');
-      debugPrint("✅ Ma'lumot keldi. Sahifa: $page");
+      debugPrint("✅ Ma'lumot keldi. Locations: $page");
       debugPrint('----------------------------------------------');
       return LocationsResponse.fromJson(jsonDecode(response.body));
     } else {

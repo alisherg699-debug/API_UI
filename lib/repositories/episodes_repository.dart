@@ -14,7 +14,7 @@ class EpisodesRepository {
 
     if (response.statusCode == 200) {
       debugPrint('----------------------------------------------');
-      debugPrint("✅ Ma'lumot keldi. Sahifa: $page");
+      debugPrint("✅ Ma'lumot keldi. Episodes: $page");
       debugPrint('----------------------------------------------');
       return EpisodesResponse.fromJson(jsonDecode(response.body));
     } else {

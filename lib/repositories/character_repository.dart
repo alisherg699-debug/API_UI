@@ -14,7 +14,7 @@ class CharacterRepository {
 
     if (response.statusCode == 200) {
       debugPrint('----------------------------------------------');
-      debugPrint("✅ Ma'lumot keldi. Sahifa: $page");
+      debugPrint("✅ Ma'lumot keldi. Character: $page");
       debugPrint('----------------------------------------------');
 
       return CharacterResponse.fromJson(jsonDecode(response.body));
