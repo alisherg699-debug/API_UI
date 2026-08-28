@@ -4,8 +4,47 @@ import '../bloc/episodes/episode_bloc.dart';
 import '../bloc/episodes/episode_event.dart';
 import '../bloc/episodes/episopde_state.dart';
 
-class EpisodesPage extends StatelessWidget {
+class EpisodesPage extends StatefulWidget {
   const EpisodesPage({super.key});
+
+  @override
+  State<EpisodesPage> createState() => _EpisodesPageState();
+}
+
+class _EpisodesPageState extends State<EpisodesPage> {
+  final ScrollController _scrollController = ScrollController();
+  int _currentPage = 1;
+  bool _isLoadingMore = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _scrollController.addListener(_onScroll);
+    context.read<EpisodeBloc>().add(FetchEpisodes(page: 1));
+  }
+
+  void _onScroll() {
+    if (_isLoadingMore) return;
+    if (_scrollController.position.pixels >= _scrollController.position.maxScrollExtent - 200) {
+      final state = context.read<EpisodeBloc>().state;
+
+      if (state is EpisodesLoaded) {
+        if (state.episodesResponse.info.next != null && state.episodesResponse.info.next!.isNotEmpty) {
+          setState(() {
+            _isLoadingMore = true;
+            _currentPage++;
+          });
+          context.read<EpisodeBloc>().add(FetchEpisodes(page: _currentPage));
+        }
+      }
+    }
+  }
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -16,28 +55,66 @@ class EpisodesPage extends StatelessWidget {
         centerTitle: true,
       ),
       backgroundColor: const Color(0xFF121212),
-      body: BlocBuilder<EpisodeBloc, EpisodesState>(
+      body: BlocConsumer<EpisodeBloc, EpisodesState>(
+        listener: (context, state) {
+          if (state is EpisodesLoaded || state is EpisodesError) {
+            setState(() => _isLoadingMore = false);
+          }
+        },
         builder: (context, state) {
-          if (state is EpisodesLoading) {
-            return const Center(
-              child: CircularProgressIndicator(color: Colors.green),
+          if (state is EpisodesInitial || (state is EpisodesLoading && _currentPage == 1)) {
+            return const Center(child: CircularProgressIndicator(color: Colors.green,));
+          }
+          if (state is EpisodesError && _currentPage == 1) {
+            return Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(state.message, style: const TextStyle(color: Colors.red), textAlign: TextAlign.center,),
+                  const SizedBox(height: 16),
+                  ElevatedButton(
+                    onPressed: () {
+                      setState(() => _currentPage = 1);
+                      context.read<EpisodeBloc>().add(FetchEpisodes(page: 1));
+                    },
+                    child: const Text("Qaytadan urinish"),
+                  )
+                ],
+              ),
             );
           }
-
           if (state is EpisodesLoaded) {
-            final episodes = state.episodesResponse.results;
-
+            final response = state.episodesResponse;
+            final episodes = response.results;
             return RefreshIndicator(
               color: Colors.green,
-              backgroundColor: Colors.black87,
               onRefresh: () async {
+                setState(() => _currentPage = 1);
                 context.read<EpisodeBloc>().add(FetchEpisodes(page: 1));
+                await Future.delayed(const Duration(milliseconds: 500));
               },
-              child: ListView.separated(
-                padding: const EdgeInsets.all(16),
-                itemCount: episodes.length,
-                separatorBuilder: (context, index) => const Divider(color: Colors.white10),
+              child: ListView.builder(
+                itemExtent: 100.0,
+                controller: _scrollController,
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                itemCount: episodes.length + (response.info.next
+                  !=null && response.info.next!.isNotEmpty ? 1 : 0),
                 itemBuilder: (context, index) {
+                  if (index == episodes.length) {
+                    return const Center(
+                      child: Padding(
+                        padding: EdgeInsets.all(16),
+                        child: SizedBox(
+                          width: 24,
+                          height: 24,
+                          child: CircularProgressIndicator(
+                            color: Colors.green,
+                            strokeWidth: 2,
+                          ),
+                        ),
+                      ),
+                    );
+                  }
                   final episode = episodes[index];
                   return Container(
                     padding: const EdgeInsets.symmetric(vertical: 8),
@@ -73,6 +150,7 @@ class EpisodesPage extends StatelessWidget {
                           ),
                         ),
                         const Icon(Icons.arrow_forward_ios, color: Colors.white24, size: 14),
+                        const Divider(color: Colors.white10, height: 1),
                       ],
                     ),
                   );
@@ -80,17 +158,10 @@ class EpisodesPage extends StatelessWidget {
               ),
             );
           }
-
-          if (state is EpisodesError) {
-            return Center(child: Text(state.message,
-                style: const TextStyle(color: Colors.red)));
-          }
-
-          return const Center(
-              child: Text("Ma'lumot topilmadi",
-                  style: TextStyle(color: Colors.white)));
-        },
+          return const Center(child: CircularProgressIndicator(color: Colors.green));
+        }
       ),
     );
   }
 }
+

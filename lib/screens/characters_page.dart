@@ -160,7 +160,11 @@ class _CharacterPageState extends State<CharacterPage> {
                                         crossAxisAlignment: CrossAxisAlignment.start,
                                         mainAxisAlignment: MainAxisAlignment.center,
                                         children: [
-                                          Text(character.name, style: const TextStyle(color: Colors.blueAccent, fontSize: 16, fontWeight: FontWeight.w500)),
+                                          Text(character.name,
+                                              style: const TextStyle(
+                                                  color: Colors.blueAccent,
+                                                  fontSize: 16,
+                                                  fontWeight: FontWeight.w500)),
                                           const SizedBox(height: 4),
                                           Text(character.status, style: const TextStyle(color: Colors.white70, fontSize: 14)),
                                         ],
