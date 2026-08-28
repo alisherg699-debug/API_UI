@@ -1,9 +1,9 @@
-import 'package:api_ui/models/episodes_model.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-
+import 'package:bloc_concurrency/bloc_concurrency.dart';
+import '../../models/episodes_model.dart';
 import '../../repositories/episodes_repository.dart';
 import 'episode_event.dart';
-import 'episopde_state.dart';
+import 'episode_state.dart';
 
 class EpisodeBloc extends Bloc<EpisodesEvent, EpisodesState> {
   final EpisodesRepository repository;

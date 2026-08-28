@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../bloc/episodes/episode_bloc.dart';
 import '../bloc/episodes/episode_event.dart';
-import '../bloc/episodes/episopde_state.dart';
+import '../bloc/episodes/episode_state.dart';
 
 class EpisodesPage extends StatefulWidget {
   const EpisodesPage({super.key});
