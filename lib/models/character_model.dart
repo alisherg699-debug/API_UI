@@ -33,8 +33,8 @@ class Info {
     return Info(
       count: json["count"] ?? 0,
       pages: json["pages"] ?? 0,
-      next: json["next"],
-      prev: json["prev"],
+      next: json["next"] ?? "",
+      prev: json["prev"] ?? "",
     );
   }
 }
