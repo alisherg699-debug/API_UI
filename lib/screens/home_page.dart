@@ -1,11 +1,4 @@
-import 'package:api_ui/bloc/locations/location_bloc.dart';
-import 'package:api_ui/bloc/locations/location_event.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import '../bloc/character/character_bloc.dart';
-import '../bloc/character/character_event.dart';
-import '../bloc/episodes/episode_bloc.dart';
-import '../bloc/episodes/episode_event.dart';
 import '../screens/episodes_page.dart';
 import '../screens/characters_page.dart';
 import '../screens/locations_page.dart';
