@@ -28,7 +28,7 @@ class EpisodeBloc extends Bloc<EpisodesEvent, EpisodesState> {
       lastResponse = currentState.episodesResponse;
     }
 
-    if (event.page == 1 && oldEpisodes.isEmpty) {
+    if (event.page == 1) {
       emit(EpisodesLoading());
     }
 

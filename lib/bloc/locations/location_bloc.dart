@@ -28,7 +28,7 @@ class LocationBloc extends Bloc<LocationsEvent, LocationsState> {
       lastResponse = currentState.locationsResponse;
     }
 
-    if (event.page == 1 && oldLocations.isEmpty) {
+    if (event.page == 1) {
       emit(LocationsLoading());
     }
 

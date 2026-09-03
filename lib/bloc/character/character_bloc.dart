@@ -28,7 +28,7 @@ class CharacterBloc extends Bloc<CharacterEvent, CharacterState> {
       lastResponse = currentState.characterResponse;
     }
 
-    if (event.page == 1 && oldCharacters.isEmpty) {
+    if (event.page == 1) {
       emit(CharacterLoading());
     }
 
