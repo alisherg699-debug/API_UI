@@ -9,16 +9,13 @@ class EpisodeBloc extends Bloc<EpisodesEvent, EpisodesState> {
   final EpisodesRepository repository;
 
   EpisodeBloc(this.repository) : super(EpisodesInitial()) {
-    on<FetchEpisodes>(
-      _onFetchEpisodes,
-      transformer: droppable(),
-    );
+    on<FetchEpisodes>(_onFetchEpisodes, transformer: droppable());
   }
 
   Future<void> _onFetchEpisodes(
-      FetchEpisodes event,
-      Emitter<EpisodesState> emit,
-      ) async {
+    FetchEpisodes event,
+    Emitter<EpisodesState> emit,
+  ) async {
     final currentState = state;
     List<Episodes> oldEpisodes = [];
     EpisodesResponse? lastResponse;
@@ -35,12 +32,16 @@ class EpisodeBloc extends Bloc<EpisodesEvent, EpisodesState> {
     try {
       final result = await repository.getEpisodes(event.page);
 
-      emit(EpisodesLoaded(
-        EpisodesResponse(
-          info: result.info,
-          results: event.page == 1 ? result.results : oldEpisodes + result.results,
+      emit(
+        EpisodesLoaded(
+          EpisodesResponse(
+            info: result.info,
+            results: event.page == 1
+                ? result.results
+                : oldEpisodes + result.results,
+          ),
         ),
-      ));
+      );
     } catch (e) {
       if (oldEpisodes.isNotEmpty && lastResponse != null) {
         emit(EpisodesLoaded(lastResponse));

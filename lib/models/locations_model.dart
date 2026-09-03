@@ -1,11 +1,8 @@
 class LocationsResponse {
   final Info info;
-  final List<Locations>results;
+  final List<Locations> results;
 
-  LocationsResponse({
-    required this.info,
-    required this.results,
-  });
+  LocationsResponse({required this.info, required this.results});
   factory LocationsResponse.fromJson(Map<String, dynamic> json) {
     return LocationsResponse(
       info: Info.fromJson(json['info'] as Map<String, dynamic>),
@@ -56,7 +53,7 @@ class Locations {
     required this.residents,
     required this.url,
     required this.created,
-});
+  });
 
   factory Locations.fromJson(Map<String, dynamic> json) {
     return Locations(
@@ -64,33 +61,15 @@ class Locations {
       name: json["name"] ?? "",
       type: json["type"] ?? "",
       dimension: json["dimension"] ?? "",
-      residents: (json["residents"] as List<dynamic>?)?.map((e)
-        => e as String).toList() ?? [],
+      residents:
+          (json["residents"] as List<dynamic>?)
+              ?.map((e) => e as String)
+              .toList() ??
+          [],
       url: json["url"] ?? "",
       created: json["created"] != null
-        ? DateTime.parse(json["created"] as String)
-        : DateTime.now(),
+          ? DateTime.parse(json["created"] as String)
+          : DateTime.now(),
     );
   }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

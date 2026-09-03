@@ -9,10 +9,7 @@ class CharacterBloc extends Bloc<CharacterEvent, CharacterState> {
   final CharacterRepository repository;
 
   CharacterBloc(this.repository) : super(CharacterInitial()) {
-    on<FetchCharacters>(
-      _onFetchCharacters,
-      transformer: droppable(),
-    );
+    on<FetchCharacters>(_onFetchCharacters, transformer: droppable());
   }
 
   Future<void> _onFetchCharacters(
@@ -35,12 +32,16 @@ class CharacterBloc extends Bloc<CharacterEvent, CharacterState> {
     try {
       final result = await repository.getCharacters(event.page);
 
-      emit(CharacterLoaded(
-        CharacterResponse(
-          info: result.info,
-          results: event.page == 1 ? result.results : oldCharacters + result.results,
+      emit(
+        CharacterLoaded(
+          CharacterResponse(
+            info: result.info,
+            results: event.page == 1
+                ? result.results
+                : oldCharacters + result.results,
+          ),
         ),
-      ));
+      );
     } catch (e) {
       if (oldCharacters.isNotEmpty && lastResponse != null) {
         emit(CharacterLoaded(lastResponse));

@@ -9,16 +9,13 @@ class LocationBloc extends Bloc<LocationsEvent, LocationsState> {
   final LocationsRepository repository;
 
   LocationBloc(this.repository) : super(LocationsInitial()) {
-    on<FetchLocations>(
-      _onFetchLocations,
-      transformer: droppable(),
-    );
+    on<FetchLocations>(_onFetchLocations, transformer: droppable());
   }
 
   Future<void> _onFetchLocations(
-      FetchLocations event,
-      Emitter<LocationsState> emit,
-      ) async {
+    FetchLocations event,
+    Emitter<LocationsState> emit,
+  ) async {
     final currentState = state;
     List<Locations> oldLocations = [];
     LocationsResponse? lastResponse;
@@ -35,12 +32,16 @@ class LocationBloc extends Bloc<LocationsEvent, LocationsState> {
     try {
       final result = await repository.getLocations(event.page);
 
-      emit(LocationsLoaded(
-        LocationsResponse(
-          info: result.info,
-          results: event.page == 1 ? result.results : oldLocations + result.results,
+      emit(
+        LocationsLoaded(
+          LocationsResponse(
+            info: result.info,
+            results: event.page == 1
+                ? result.results
+                : oldLocations + result.results,
+          ),
         ),
-      ));
+      );
     } catch (e) {
       if (oldLocations.isNotEmpty && lastResponse != null) {
         emit(LocationsLoaded(lastResponse));

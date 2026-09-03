@@ -1,11 +1,8 @@
 class EpisodesResponse {
   final Info info;
-  final List<Episodes>results;
+  final List<Episodes> results;
 
-  EpisodesResponse({
-    required this.info,
-    required this.results,
-  });
+  EpisodesResponse({required this.info, required this.results});
   factory EpisodesResponse.fromJson(Map<String, dynamic> json) {
     return EpisodesResponse(
       info: Info.fromJson(json['info'] as Map<String, dynamic>),
@@ -64,12 +61,15 @@ class Episodes {
       name: json["name"] ?? "",
       air_date: json["air_date"] ?? "",
       episode: json["episode"] ?? "",
-      characters: (json["characters"] as List<dynamic>?)?.map((e)
-        => e as String).toList() ?? [],
+      characters:
+          (json["characters"] as List<dynamic>?)
+              ?.map((e) => e as String)
+              .toList() ??
+          [],
       url: json["url"] ?? "",
       created: json["created"] != null
-        ? DateTime.parse(json["created"] as String)
-        : DateTime.now(),
+          ? DateTime.parse(json["created"] as String)
+          : DateTime.now(),
     );
   }
 }

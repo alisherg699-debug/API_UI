@@ -1,11 +1,8 @@
 class CharacterResponse {
   final Info info;
-  final List<Character>results;
+  final List<Character> results;
 
-  CharacterResponse({
-    required this.info,
-    required this.results,
-});
+  CharacterResponse({required this.info, required this.results});
   factory CharacterResponse.fromJson(Map<String, dynamic> json) {
     return CharacterResponse(
       info: Info.fromJson(json['info'] as Map<String, dynamic>),
@@ -27,7 +24,7 @@ class Info {
     required this.pages,
     required this.next,
     required this.prev,
-});
+  });
 
   factory Info.fromJson(Map<String, dynamic> json) {
     return Info(
@@ -43,16 +40,10 @@ class Location {
   final String name;
   final String url;
 
-  Location({
-    required this.name,
-    required this.url,
-  });
+  Location({required this.name, required this.url});
 
   factory Location.fromJson(Map<String, dynamic> json) {
-    return Location(
-      name: json['name'] ?? "",
-      url: json['url'] ?? "",
-    );
+    return Location(name: json['name'] ?? "", url: json['url'] ?? "");
   }
 }
 
@@ -83,7 +74,7 @@ class Character {
     required this.episode,
     required this.url,
     required this.created,
-});
+  });
 
   factory Character.fromJson(Map<String, dynamic> json) {
     return Character(
@@ -94,42 +85,21 @@ class Character {
       type: json["type"] ?? "",
       gender: json["gender"] ?? "",
       origin: json["origin"] != null
-        ? Location.fromJson(json["origin"] as Map<String, dynamic>)
-        : Location(name: "", url: ""),
+          ? Location.fromJson(json["origin"] as Map<String, dynamic>)
+          : Location(name: "", url: ""),
       location: json["location"] != null
-        ? Location.fromJson(json["location"] as Map<String, dynamic>)
-        : Location(name: "", url: ""),
+          ? Location.fromJson(json["location"] as Map<String, dynamic>)
+          : Location(name: "", url: ""),
       image: json["image"] ?? "",
-      episode: (json["episode"] as List<dynamic>?)?.map((e)
-        => e as String).toList() ?? [],
+      episode:
+          (json["episode"] as List<dynamic>?)
+              ?.map((e) => e as String)
+              .toList() ??
+          [],
       url: json["url"] ?? "",
       created: json["created"] != null
-        ? DateTime.parse(json["created"] as String)
-        : DateTime.now(),
+          ? DateTime.parse(json["created"] as String)
+          : DateTime.now(),
     );
   }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

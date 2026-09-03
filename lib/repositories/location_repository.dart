@@ -5,9 +5,15 @@ import '../models/locations_model.dart';
 
 class LocationsRepository {
   Future<LocationsResponse> getLocations(int page) async {
-    debugPrint('------------------------------------------------------------------------');
-    debugPrint('🚀 Request URL: https://rickandmortyapi.com/api/location/?page=$page');
-    debugPrint('------------------------------------------------------------------------');
+    debugPrint(
+      '------------------------------------------------------------------------',
+    );
+    debugPrint(
+      '🚀 Request URL: https://rickandmortyapi.com/api/location/?page=$page',
+    );
+    debugPrint(
+      '------------------------------------------------------------------------',
+    );
     final response = await http.get(
       Uri.parse('https://rickandmortyapi.com/api/location/?page=$page'),
     );

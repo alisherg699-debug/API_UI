@@ -5,9 +5,15 @@ import '../models/character_model.dart';
 
 class CharacterRepository {
   Future<CharacterResponse> getCharacters(int page) async {
-    debugPrint('------------------------------------------------------------------------');
-    debugPrint('🚀 Request URL: https://rickandmortyapi.com/api/character/?page=$page');
-    debugPrint('------------------------------------------------------------------------');
+    debugPrint(
+      '------------------------------------------------------------------------',
+    );
+    debugPrint(
+      '🚀 Request URL: https://rickandmortyapi.com/api/character/?page=$page',
+    );
+    debugPrint(
+      '------------------------------------------------------------------------',
+    );
     final response = await http.get(
       Uri.parse('https://rickandmortyapi.com/api/character/?page=$page'),
     );

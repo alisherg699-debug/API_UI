@@ -27,16 +27,20 @@ class _CharacterPageState extends State<CharacterPage> {
   void _onScroll() {
     if (_isLoadingMore) return;
 
-    if (_scrollController.position.pixels >= _scrollController.position.maxScrollExtent - 200) {
+    if (_scrollController.position.pixels >=
+        _scrollController.position.maxScrollExtent - 200) {
       final state = context.read<CharacterBloc>().state;
 
       if (state is CharacterLoaded) {
-        if (state.characterResponse.info.next != null && state.characterResponse.info.next!.isNotEmpty) {
+        if (state.characterResponse.info.next != null &&
+            state.characterResponse.info.next!.isNotEmpty) {
           setState(() {
             _isLoadingMore = true;
             _currentPage++;
           });
-          context.read<CharacterBloc>().add(FetchCharacters(page: _currentPage));
+          context.read<CharacterBloc>().add(
+            FetchCharacters(page: _currentPage),
+          );
         }
       }
     }
@@ -64,8 +68,11 @@ class _CharacterPageState extends State<CharacterPage> {
           }
         },
         builder: (context, state) {
-          if (state is CharacterInitial || (state is CharacterLoading && _currentPage == 1)) {
-            return const Center(child: CircularProgressIndicator(color: Colors.green));
+          if (state is CharacterInitial ||
+              (state is CharacterLoading && _currentPage == 1)) {
+            return const Center(
+              child: CircularProgressIndicator(color: Colors.green),
+            );
           }
 
           if (state is CharacterError && _currentPage == 1) {
@@ -73,12 +80,18 @@ class _CharacterPageState extends State<CharacterPage> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Text(state.message, style: const TextStyle(color: Colors.red), textAlign: TextAlign.center),
+                  Text(
+                    state.message,
+                    style: const TextStyle(color: Colors.red),
+                    textAlign: TextAlign.center,
+                  ),
                   const SizedBox(height: 16),
                   ElevatedButton(
                     onPressed: () {
                       setState(() => _currentPage = 1);
-                      context.read<CharacterBloc>().add(FetchCharacters(page: 1));
+                      context.read<CharacterBloc>().add(
+                        FetchCharacters(page: 1),
+                      );
                     },
                     child: const Text("Qaytadan urinish"),
                   ),
@@ -105,7 +118,11 @@ class _CharacterPageState extends State<CharacterPage> {
                     padding: EdgeInsets.fromLTRB(16, 16, 16, 8),
                     child: Text(
                       "👀 CLICK ON ANY CELL FOR FURTHER INFORMATION",
-                      style: TextStyle(color: Colors.grey, fontSize: 10, fontWeight: FontWeight.bold),
+                      style: TextStyle(
+                        color: Colors.grey,
+                        fontSize: 10,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                   ),
                   Expanded(
@@ -113,8 +130,12 @@ class _CharacterPageState extends State<CharacterPage> {
                       itemExtent: 100.0,
                       controller: _scrollController,
                       padding: const EdgeInsets.symmetric(horizontal: 16),
-                      itemCount: characters.length + (response.info.next
-                          != null && response.info.next!.isNotEmpty ? 1 : 0),
+                      itemCount:
+                          characters.length +
+                          (response.info.next != null &&
+                                  response.info.next!.isNotEmpty
+                              ? 1
+                              : 0),
                       itemBuilder: (context, index) {
                         if (index == characters.length) {
                           return const Center(
@@ -137,7 +158,9 @@ class _CharacterPageState extends State<CharacterPage> {
                           children: [
                             Expanded(
                               child: Container(
-                                padding: const EdgeInsets.symmetric(vertical: 12),
+                                padding: const EdgeInsets.symmetric(
+                                  vertical: 12,
+                                ),
                                 child: Row(
                                   children: [
                                     CircleAvatar(
@@ -147,30 +170,54 @@ class _CharacterPageState extends State<CharacterPage> {
                                         child: CachedNetworkImage(
                                           imageUrl: character.image,
                                           fit: BoxFit.cover,
-                                          placeholder: (context, url) => const Center(
-                                            child: CircularProgressIndicator(strokeWidth: 2, color: Colors.green),
-                                          ),
-                                          errorWidget: (context, url, error) => const Icon(Icons.person, color: Colors.grey),
+                                          placeholder: (context, url) =>
+                                              const Center(
+                                                child:
+                                                    CircularProgressIndicator(
+                                                      strokeWidth: 2,
+                                                      color: Colors.green,
+                                                    ),
+                                              ),
+                                          errorWidget: (context, url, error) =>
+                                              const Icon(
+                                                Icons.person,
+                                                color: Colors.grey,
+                                              ),
                                         ),
                                       ),
                                     ),
                                     const SizedBox(width: 16),
                                     Expanded(
                                       child: Column(
-                                        crossAxisAlignment: CrossAxisAlignment.start,
-                                        mainAxisAlignment: MainAxisAlignment.center,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
                                         children: [
-                                          Text(character.name,
-                                              style: const TextStyle(
-                                                  color: Colors.blueAccent,
-                                                  fontSize: 16,
-                                                  fontWeight: FontWeight.w500)),
+                                          Text(
+                                            character.name,
+                                            style: const TextStyle(
+                                              color: Colors.blueAccent,
+                                              fontSize: 16,
+                                              fontWeight: FontWeight.w500,
+                                            ),
+                                          ),
                                           const SizedBox(height: 4),
-                                          Text(character.status, style: const TextStyle(color: Colors.white70, fontSize: 14)),
+                                          Text(
+                                            character.status,
+                                            style: const TextStyle(
+                                              color: Colors.white70,
+                                              fontSize: 14,
+                                            ),
+                                          ),
                                         ],
                                       ),
                                     ),
-                                    const Icon(Icons.arrow_forward_ios, color: Colors.white24, size: 16),
+                                    const Icon(
+                                      Icons.arrow_forward_ios,
+                                      color: Colors.white24,
+                                      size: 16,
+                                    ),
                                   ],
                                 ),
                               ),
@@ -186,7 +233,9 @@ class _CharacterPageState extends State<CharacterPage> {
             );
           }
 
-          return const Center(child: CircularProgressIndicator(color: Colors.green));
+          return const Center(
+            child: CircularProgressIndicator(color: Colors.green),
+          );
         },
       ),
     );

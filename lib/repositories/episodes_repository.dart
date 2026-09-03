@@ -5,9 +5,15 @@ import '../models/episodes_model.dart';
 
 class EpisodesRepository {
   Future<EpisodesResponse> getEpisodes(int page) async {
-    debugPrint('------------------------------------------------------------------------');
-    debugPrint('🚀 Request URL: https://rickandmortyapi.com/api/episode/?page=$page');
-    debugPrint('------------------------------------------------------------------------');
+    debugPrint(
+      '------------------------------------------------------------------------',
+    );
+    debugPrint(
+      '🚀 Request URL: https://rickandmortyapi.com/api/episode/?page=$page',
+    );
+    debugPrint(
+      '------------------------------------------------------------------------',
+    );
     final response = await http.get(
       Uri.parse('https://rickandmortyapi.com/api/episode/?page=$page'),
     );

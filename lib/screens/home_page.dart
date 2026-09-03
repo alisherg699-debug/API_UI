@@ -3,7 +3,6 @@ import '../screens/episodes_page.dart';
 import '../screens/characters_page.dart';
 import '../screens/locations_page.dart';
 
-
 class MyHomeWidget extends StatefulWidget {
   const MyHomeWidget({super.key});
 
@@ -12,7 +11,6 @@ class MyHomeWidget extends StatefulWidget {
 }
 
 class _MyHomeWidgetState extends State<MyHomeWidget> {
-
   int _selectionIndex = 0;
 
   static const List<Widget> _pages = [
@@ -51,17 +49,11 @@ class _MyHomeWidgetState extends State<MyHomeWidget> {
         unselectedItemColor: Colors.grey,
         items: const [
           BottomNavigationBarItem(
-              icon: Icon(Icons.people),
-              label: "Characters"
+            icon: Icon(Icons.people),
+            label: "Characters",
           ),
-          BottomNavigationBarItem(
-              icon: Icon(Icons.map),
-              label: "Locations"
-          ),
-          BottomNavigationBarItem(
-              icon: Icon(Icons.tv),
-              label: "Episodes"
-          ),
+          BottomNavigationBarItem(icon: Icon(Icons.map), label: "Locations"),
+          BottomNavigationBarItem(icon: Icon(Icons.tv), label: "Episodes"),
         ],
       ),
     );

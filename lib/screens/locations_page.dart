@@ -26,11 +26,13 @@ class _LocationPageState extends State<LocationsPage> {
   void _onScroll() {
     if (_isLoadingMore) return;
 
-    if (_scrollController.position.pixels >= _scrollController.position.maxScrollExtent - 200) {
+    if (_scrollController.position.pixels >=
+        _scrollController.position.maxScrollExtent - 200) {
       final state = context.read<LocationBloc>().state;
 
       if (state is LocationsLoaded) {
-        if (state.locationsResponse.info.next != null && state.locationsResponse.info.next!.isNotEmpty) {
+        if (state.locationsResponse.info.next != null &&
+            state.locationsResponse.info.next!.isNotEmpty) {
           setState(() {
             _isLoadingMore = true;
             _currentPage++;
@@ -40,16 +42,18 @@ class _LocationPageState extends State<LocationsPage> {
       }
     }
   }
+
   @override
   void dispose() {
     _scrollController.dispose();
     super.dispose();
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Locations", style: TextStyle(color: Colors.white),),
+        title: const Text("Locations", style: TextStyle(color: Colors.white)),
         backgroundColor: Colors.black87,
         centerTitle: true,
       ),
@@ -61,15 +65,22 @@ class _LocationPageState extends State<LocationsPage> {
           }
         },
         builder: (context, state) {
-          if (state is LocationsInitial || (state is LocationsLoading && _currentPage == 1)) {
-            return const Center(child: CircularProgressIndicator(color: Colors.green));
+          if (state is LocationsInitial ||
+              (state is LocationsLoading && _currentPage == 1)) {
+            return const Center(
+              child: CircularProgressIndicator(color: Colors.green),
+            );
           }
           if (state is LocationsError && _currentPage == 1) {
             return Center(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Text(state.message, style: const TextStyle(color: Colors.red), textAlign: TextAlign.center),
+                  Text(
+                    state.message,
+                    style: const TextStyle(color: Colors.red),
+                    textAlign: TextAlign.center,
+                  ),
                   const SizedBox(height: 16),
                   ElevatedButton(
                     onPressed: () {
@@ -77,7 +88,7 @@ class _LocationPageState extends State<LocationsPage> {
                       context.read<LocationBloc>().add(FetchLocations(page: 1));
                     },
                     child: const Text("Qaytadan urinish"),
-                  )
+                  ),
                 ],
               ),
             );
@@ -97,8 +108,12 @@ class _LocationPageState extends State<LocationsPage> {
                 itemExtent: 100.0,
                 controller: _scrollController,
                 padding: const EdgeInsets.all(16),
-                itemCount: locations.length + (response.info.next
-                    != null && response.info.next!.isNotEmpty ? 1 : 0),
+                itemCount:
+                    locations.length +
+                    (response.info.next != null &&
+                            response.info.next!.isNotEmpty
+                        ? 1
+                        : 0),
                 itemBuilder: (context, index) {
                   if (index == locations.length) {
                     return const Center(
@@ -149,7 +164,11 @@ class _LocationPageState extends State<LocationsPage> {
                             ],
                           ),
                         ),
-                        const Icon(Icons.arrow_forward_ios, color: Colors.white24, size: 14),
+                        const Icon(
+                          Icons.arrow_forward_ios,
+                          color: Colors.white24,
+                          size: 14,
+                        ),
                         const Divider(color: Colors.white10, height: 1),
                       ],
                     ),
@@ -158,10 +177,11 @@ class _LocationPageState extends State<LocationsPage> {
               ),
             );
           }
-          return const Center(child: CircularProgressIndicator(color: Colors.green));
-        }
+          return const Center(
+            child: CircularProgressIndicator(color: Colors.green),
+          );
+        },
       ),
     );
   }
 }
-

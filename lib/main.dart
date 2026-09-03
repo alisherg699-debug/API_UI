@@ -12,15 +12,9 @@ void main() {
   runApp(
     MultiBlocProvider(
       providers: [
-        BlocProvider(
-          create: (context) => CharacterBloc(CharacterRepository()),
-        ),
-        BlocProvider(
-          create: (context) => EpisodeBloc(EpisodesRepository()),
-        ),
-        BlocProvider(
-          create: (context) => LocationBloc(LocationsRepository()),
-        ),
+        BlocProvider(create: (context) => CharacterBloc(CharacterRepository())),
+        BlocProvider(create: (context) => EpisodeBloc(EpisodesRepository())),
+        BlocProvider(create: (context) => LocationBloc(LocationsRepository())),
       ],
       child: const MyApp(),
     ),
@@ -34,9 +28,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      theme: ThemeData.dark().copyWith(
-        scaffoldBackgroundColor: Colors.black,
-      ),
+      theme: ThemeData.dark().copyWith(scaffoldBackgroundColor: Colors.black),
       home: const MyHomeWidget(),
     );
   }
